@@ -125,7 +125,7 @@ If you receive an error that a file cannot be found, you most likely have the wr
 pain <- read.csv("pain.csv") 
 ```
 
-We can see that `df` contains the information from the .csv file, and that R has printed the first few observations of the data.
+We can see that `pain` contains the information from the .csv file.
 
 ### Data Frames
 
@@ -180,11 +180,13 @@ weather_data$day_of_week
 weather_data$temp
 ```
 
-The column `day_of_week` is a categorical column, but it can only take on a limited number of values. For this kind of column, it is often useful to convert that column to a factor as we did before.
+The column `day_of_week` is a categorical column, but it can only take on a limited number of values. For this kind of column, it is often useful to convert that column to a factor. A factor is a special type of column that can only take on certain values.
 
 ```{r}
-weather_data$day_of_week <- factor(weather_data$day_of_week)
-levels(weather_data$day_of_week)
+weather_data$day_of_week <- factor(weather_data$day_of_week, 
+                                   levels = c("Monday", "Tuesday", "Wednesday", 
+                                              "Thursday", "Friday", "Saturday",
+                                              "Sunday"))
 ```
 
 ## Summarizing Data Columns
@@ -193,7 +195,7 @@ We now look at the data we have loaded into the data frame called `pain`. We use
 
 ```{r}
 #head(pain)
-names(pain)
+#names(pain)
 ```
 
 Recall that the `$` operator can be used to access a single column. Alternatively, we can use double brackets `[[]]` to select a column. We demonstrate both ways to print the first five values in the column with the patient's average pain intensity.
@@ -222,9 +224,9 @@ median(pain$PAIN_INTENSITY_AVERAGE, na.rm=TRUE)
 
 Additionally, the following functions are helpful for summarizing quantitative columns.
 
--   `range()`\index{R functions!range()@\texttt{range()}} - returns the minimum and maximum values for a numeric vector x.
--   `quantile()`\index{R functions!quantile()@\texttt{quantile()}} - returns the sample quantiles for a numeric vector.
--   `IQR()`\index{R functions!IQR()@\texttt{IQR()}} - returns the interquartile range for a numeric vector.
+-   `range()` - returns the minimum and maximum values for a numeric vector x.
+-   `quantile()`- returns the sample quantiles for a numeric vector.
+-   `IQR()` - returns the interquartile range for a numeric vector.
 
 We can also use the `summary()` function for categorical variables. In this case, R finds the counts for each level.
 
@@ -342,7 +344,8 @@ For categorical columns, we may want to plot the counts in each category using a
 ```{r}
 race_counts <- sort(table(pain$PAT_RACE), decreasing = TRUE)
 barplot(height = race_counts, names = names(race_counts), 
-        col = "violetred", xlab="Race", ylab="Frequency")
+        col = "violetred", xlab="Race", ylab="Frequency",
+        cex.names = 0.75)
 ```
 
 With a barplot, we can even specify a different color for each bar. To do so, `col` must be a vector of specified colors with the same length as the number of categories.
@@ -350,7 +353,8 @@ With a barplot, we can even specify a different color for each bar. To do so, `c
 ```{r}
 barplot(height = race_counts, names = names(race_counts), 
         col = c("orange", "violetred", "blue", "green", "yellow"),
-        xlab = "Smoking Status", ylab = "Frequency")
+        xlab = "Race", ylab = "Frequency",
+        cex.names = 0.75)
 ```
 
 ## Bivariate Distributions 
@@ -361,7 +365,7 @@ We now turn our attention to relationships among multiple columns. When we have 
 table(pain$PAT_SEX, pain$PAT_RACE)
 ```
 
-To look at the sample distribution of a continuous column stratified by a categorical column, we can call the `summary()` function for each subset of the data. In the subsequent code, we look at the distribution of blood lead level by sex and observe higher blood lead levels in male observations.
+To look at the sample distribution of a continuous column stratified by a categorical column, we can call the `summary()` function for each subset of the data. In the subsequent code, we look at the distribution of depression by sex.
 
 ```{r}
 summary(pain$PROMIS_DEPRESSION[pain$PAT_SEX == "female"])
@@ -375,7 +379,7 @@ plot(pain$PAT_SEX, pain$PAIN_INTENSITY_AVERAGE, ylab = "Pain Intensity",
      xlab = "Sex")
 ```
 
-To visualize the bivariate distributions between two continuous columns, we can use scatter plots. To create a scatter plot, we use the `plot()` function again. We use this function to show the relationship between systolic and diastolic blood pressure.
+To visualize the bivariate distributions between two continuous columns, we can use scatter plots. To create a scatter plot, we use the `plot()` function again.
 
 ```{r}
 plot(pain$PROMIS_PHYSICAL_FUNCTION, pain$PROMIS_DEPRESSION, col = "blue", 
